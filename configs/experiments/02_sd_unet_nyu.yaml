@@ -1,0 +1,26 @@
+_base_:
+  - ../_base/default.yaml
+  - ../_base/nyu.yaml
+
+experiment:
+  name: 02_sd_unet_nyu
+  approach: 2
+  description: Frozen Stable Diffusion UNet features + trained lightweight decoder.
+
+model:
+  encoder:
+    name: sd_unet
+    model_id: stabilityai/stable-diffusion-2-1
+    frozen: true
+    timestep: 1                    # single forward pass for feature extraction
+    feature_blocks: [up_1, up_2, up_3, mid]   # which UNet blocks to tap
+    prompt: ""                     # empty / null text conditioning
+  fusion: null
+  decoder:
+    name: lightweight
+    out_channels: [256, 128, 64, 32]
+
+training:
+  trainable: [decoder]             # encoder stays frozen
+  optimizer:
+    lr: 2.0e-4                     # decoder-only -> can use a slightly higher lr

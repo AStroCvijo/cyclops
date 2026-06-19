@@ -1,0 +1,8 @@
+# Gaussovo zamucenje (Gaussian blur).
+degradation:
+  name: gaussian_blur
+  backend: albumentations          # albumentations.GaussianBlur
+  severities:
+    light:    { sigma: 1.0, kernel_size: 7 }
+    moderate: { sigma: 2.0, kernel_size: 13 }
+    severe:   { sigma: 3.0, kernel_size: 19 }

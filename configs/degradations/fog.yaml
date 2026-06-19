@@ -1,0 +1,9 @@
+# Homogena magla. Deterministic per-severity so every model sees identical images.
+# Generated once to disk by scripts/generate_degraded.py.
+degradation:
+  name: fog
+  backend: albumentations          # albumentations.RandomFog (fixed seed)
+  severities:                      # one degraded test set per level
+    light:    { fog_coef: 0.3, alpha_coef: 0.08 }
+    moderate: { fog_coef: 0.5, alpha_coef: 0.08 }
+    severe:   { fog_coef: 0.7, alpha_coef: 0.08 }

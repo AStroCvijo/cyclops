@@ -1,0 +1,22 @@
+_base_:
+  - ../_base/default.yaml
+  - ../_base/kitti.yaml
+
+experiment:
+  name: 01_resnet50_kitti
+  approach: 1
+  description: Supervised baseline — ResNet-50 encoder + lightweight decoder (lower bound).
+
+model:
+  encoder:
+    name: resnet50
+    pretrained: true
+    frozen: false
+    out_indices: [1, 2, 3, 4]
+  fusion: null
+  decoder:
+    name: lightweight
+    out_channels: [256, 128, 64, 32]
+
+training:
+  trainable: null

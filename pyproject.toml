@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cyclops"
+version = "0.1.0"
+description = "Comparative analysis of monocular depth estimation methods with robustness evaluation under degraded visual conditions"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Jovan Cvijanovic" },
+    { name = "Vukan Radojevic" },
+]
+dependencies = [
+    "torch>=2.1",
+    "torchvision>=0.16",
+    "numpy",
+    "pillow",
+    "opencv-python",
+    "albumentations",
+    "diffusers",
+    "transformers",
+    "accelerate",
+    "pyyaml",
+    "tqdm",
+    "wandb",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+dev = ["jupyter", "ipykernel", "ruff", "pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

@@ -1,0 +1,13 @@
+# KITTI Depth — outdoor, sparse Velodyne lidar annotations (~5% of pixels).
+dataset:
+  name: kitti
+  root: data/kitti
+  splits:
+    train: data/kitti/train            # ~86k images, sparse gt
+    test: data/kitti/test              # 1000 Eigen split images, dense gt
+  image_size: [352, 1216]              # H, W (KITTI-friendly multiple of 32)
+  depth:
+    min: 0.001
+    max: 80.0
+    unit: meter
+  eval_crop: garg                       # Garg crop used by KITTI Eigen eval

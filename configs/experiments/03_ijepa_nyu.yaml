@@ -1,0 +1,24 @@
+_base_:
+  - ../_base/default.yaml
+  - ../_base/nyu.yaml
+
+experiment:
+  name: 03_ijepa_nyu
+  approach: 3
+  description: Frozen I-JEPA ViT encoder + trained decoder (semantic patch features).
+
+model:
+  encoder:
+    name: ijepa
+    model_id: facebook/ijepa_vith14_1k
+    frozen: true
+    feature_layers: [5, 11, 17, 23]   # ViT blocks reassembled into a feature pyramid
+  fusion: null
+  decoder:
+    name: dpt                          # DPT-style reassembly suits ViT tokens
+    out_channels: [256, 128, 64, 32]
+
+training:
+  trainable: [decoder]
+  optimizer:
+    lr: 2.0e-4

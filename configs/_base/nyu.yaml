@@ -1,0 +1,13 @@
+# NYU Depth V2 — indoor, dense Kinect annotations.
+dataset:
+  name: nyu_depth_v2
+  root: data/nyu_depth_v2
+  splits:
+    train: data/nyu_depth_v2/train     # ~50k RGB-depth pairs
+    test: data/nyu_depth_v2/test       # 654 (Eigen) test images
+  image_size: [480, 640]               # H, W
+  depth:
+    min: 0.001
+    max: 10.0
+    unit: meter
+  eval_crop: eigen                      # NYU Eigen center crop

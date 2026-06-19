@@ -1,0 +1,9 @@
+# Smanjenje ekspozicije (under-exposure / low-light, e.g. nocna voznja).
+# Brightness factor < 0 darkens; gamma > 1 crushes shadows.
+degradation:
+  name: exposure
+  backend: albumentations          # albumentations.RandomBrightnessContrast / gamma
+  severities:
+    light:    { brightness: -0.3, gamma: 1.5 }
+    moderate: { brightness: -0.5, gamma: 2.5 }
+    severe:   { brightness: -0.7, gamma: 3.5 }

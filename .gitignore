@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# cyclops: heavy artifacts (keep folder, ignore contents)
+/data/*
+!/data/.gitkeep
+/outputs/*
+!/outputs/.gitkeep

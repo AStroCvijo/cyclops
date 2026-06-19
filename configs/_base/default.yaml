@@ -1,0 +1,39 @@
+seed: 42
+device: cuda
+
+training:
+  epochs: 20
+  batch_size: 8
+  num_workers: 8
+  amp: true                 # mixed precision
+  grad_clip: 1.0
+  # Which submodules receive gradients. For frozen-encoder approaches this is
+  # ["decoder"] (and ["decoder", "fusion"] for approach 4). Baseline uses null = all.
+  trainable: null
+  optimizer:
+    name: adamw
+    lr: 1.0e-4
+    weight_decay: 1.0e-2
+  scheduler:
+    name: cosine
+    warmup_epochs: 1
+  loss:
+    name: silog            # scale-invariant log loss
+    lambda: 0.85
+
+eval:
+  metrics: [abs_rel, rmse, delta1]
+  batch_size: 8
+
+logging:
+  wandb:
+    enabled: true
+    project: cyclops-depth
+    entity: null            # set to your W&B team/user
+  log_interval: 50          # steps
+
+checkpoint:
+  dir: outputs              # outputs/<experiment.name>/checkpoints
+  save_best: true
+  monitor: abs_rel
+  mode: min                 # lower is better

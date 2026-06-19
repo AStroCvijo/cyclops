@@ -1,0 +1,33 @@
+_base_:
+  - ../_base/default.yaml
+  - ../_base/nyu.yaml
+
+experiment:
+  name: 04_fusion_nyu
+  approach: 4
+  description: Fusion of frozen SD-UNet + I-JEPA features + trained decoder & fusion module.
+
+model:
+  encoders:                          # list -> multiple frozen backbones
+    - name: sd_unet
+      model_id: stabilityai/stable-diffusion-2-1
+      frozen: true
+      timestep: 1
+      feature_blocks: [up_1, up_2, up_3, mid]
+      prompt: ""
+    - name: ijepa
+      model_id: facebook/ijepa_vith14_1k
+      frozen: true
+      feature_layers: [5, 11, 17, 23]
+  fusion:
+    name: cross_attention            # alternatives: concat
+    embed_dim: 256
+    num_heads: 8
+  decoder:
+    name: lightweight
+    out_channels: [256, 128, 64, 32]
+
+training:
+  trainable: [fusion, decoder]       # both encoders stay frozen
+  optimizer:
+    lr: 2.0e-4
