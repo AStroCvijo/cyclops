@@ -1,10 +1,10 @@
 # NYU Depth V2 — indoor, dense Kinect annotations.
 dataset:
   name: nyu_depth_v2
-  root: data/nyu_depth_v2
-  splits:
-    train: data/nyu_depth_v2/sync                 # ~50k RGB-depth pairs (BTS sync)
-    test: data/nyu_depth_v2/official_splits/test  # 654 (Eigen) test images
+  root: data/nyu_depth_v2                # <- move the data? change ONLY this line (e.g. ~/data/nyu_depth_v2)
+  splits:                                # paths below are relative to `root`
+    train: sync                          # ~50k RGB-depth pairs (BTS sync)
+    test: official_splits/test           # 654 (Eigen) test images
   image_size: [480, 640]               # H, W
   depth:
     min: 0.001
