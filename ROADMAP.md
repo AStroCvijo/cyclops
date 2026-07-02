@@ -23,7 +23,7 @@ Implementation plan for [cyclops](README.md). Guiding principle: **get one model
 - [x] `engine/trainer.py` — AMP, grad clip, cosine + warmup, `trainable` filter, W&B, best checkpoint
 - [x] `engine/evaluator.py` — metrics, eval crop (eigen), optional median align
 - [x] `scripts/train.py`, `scripts/evaluate.py` — thin CLI wrappers
-- [x] **run `01_resnet50_nyu` end-to-end — pipeline works** (1-epoch smoke: loss 6.8→1.2, abs_rel 0.155, delta1 0.773, checkpoint + W&B ok). Rerun full 20 epochs for the reported baseline.
+- [x] **run `01_resnet50_nyu` — baseline trained (RunPod 4090)**. Converged ~epoch 11: **abs_rel 0.138, rmse 0.495, delta1 0.822** (NYU clean test). Plateaued (epochs 11→15 flat).
 
 ## Phase 3 — Frozen encoders (Approaches 2 & 3)
 - [ ] `models/encoders/sd_unet.py` — frozen SD-2.1 UNet, single forward at `timestep=1`, tap `feature_blocks` → run `02_sd_unet_nyu`
