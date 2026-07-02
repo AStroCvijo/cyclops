@@ -1,0 +1,138 @@
+_wandb:
+    value:
+        cli_version: 0.28.0
+        e:
+            wcgzgeh6vxv2vgm2ci76szdseew0dg8t:
+                args:
+                    - --config
+                    - configs/experiments/01_resnet50_nyu.yaml
+                codePath: scripts/train.py
+                codePathLocal: scripts/train.py
+                cpu_count: 8
+                cpu_count_logical: 16
+                cudaVersion: "13.2"
+                disk:
+                    /:
+                        total: "1081101176832"
+                        used: "57380089856"
+                email: jovan.cvijanovic2@gmail.com
+                executable: /home/jovan/miniconda3/envs/cyclops/bin/python
+                git:
+                    commit: 46e0a6e8b80ea35308ab82dd966854d696d7d24e
+                    remote: https://github.com/AStroCvijo/cyclops.git
+                gpu: NVIDIA GeForce RTX 4060 Laptop GPU
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ada
+                      memoryTotal: "8585740288"
+                      name: NVIDIA GeForce RTX 4060 Laptop GPU
+                      uuid: GPU-0f68743f-9209-c575-89d3-6d9fc8d856b7
+                host: CVIJOPC
+                memory:
+                    total: "8139235328"
+                os: Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39
+                program: /mnt/c/Users/jovan/OneDrive/Desktop/RI/cyclops/scripts/train.py
+                python: CPython 3.11.15
+                root: /mnt/c/Users/jovan/OneDrive/Desktop/RI/cyclops
+                startedAt: "2026-07-02T17:28:36.590535Z"
+                writerId: wcgzgeh6vxv2vgm2ci76szdseew0dg8t
+        m: []
+        python_version: 3.11.15
+        t:
+            "1":
+                - 1
+                - 41
+            "2":
+                - 1
+                - 41
+            "3":
+                - 2
+                - 13
+                - 16
+                - 61
+            "4": 3.11.15
+            "5": 0.28.0
+            "12": 0.28.0
+            "13": linux-x86_64
+checkpoint:
+    value:
+        dir: outputs
+        mode: min
+        monitor: abs_rel
+        save_best: true
+dataset:
+    value:
+        depth:
+            max: 10
+            min: 0.001
+            scale: 1000
+            unit: meter
+        eval_crop: eigen
+        image_size:
+            - 480
+            - 640
+        name: nyu_depth_v2
+        root: data/nyu_depth_v2
+        splits:
+            test: data/nyu_depth_v2/official_splits/test
+            train: data/nyu_depth_v2/sync
+device:
+    value: cuda
+eval:
+    value:
+        batch_size: 8
+        metrics:
+            - abs_rel
+            - rmse
+            - delta1
+experiment:
+    value:
+        approach: 1
+        description: Supervised baseline — ResNet-50 encoder + lightweight decoder (lower bound).
+        name: 01_resnet50_nyu
+logging:
+    value:
+        log_interval: 50
+        wandb:
+            enabled: true
+            entity: null
+            project: cyclops-depth
+model:
+    value:
+        decoder:
+            name: lightweight
+            out_channels:
+                - 256
+                - 128
+                - 64
+                - 32
+        encoder:
+            frozen: false
+            name: resnet50
+            out_indices:
+                - 1
+                - 2
+                - 3
+                - 4
+            pretrained: true
+        fusion: null
+seed:
+    value: 42
+training:
+    value:
+        amp: true
+        batch_size: 8
+        epochs: 1
+        grad_clip: 1
+        loss:
+            lambda: 0.85
+            name: silog
+        num_workers: 8
+        optimizer:
+            lr: 0.0001
+            name: adamw
+            weight_decay: 0.01
+        scheduler:
+            name: cosine
+            warmup_epochs: 1
+        trainable: null

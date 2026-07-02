@@ -64,8 +64,9 @@ def build_dataset(cfg, split):
     ds = cfg["dataset"]
     if ds["name"] != "nyu_depth_v2":
         raise ValueError(f"only NYU is implemented so far, got {ds['name']!r}")
+    root = Path(ds["root"]).expanduser() / ds["splits"][split]   # root + relative split
     return NYUDataset(
-        root=ds["splits"][split],
+        root=root,
         image_size=ds["image_size"],
         depth_min=ds["depth"]["min"],
         depth_max=ds["depth"]["max"],

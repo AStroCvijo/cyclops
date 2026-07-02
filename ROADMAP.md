@@ -15,15 +15,15 @@ Implementation plan for [cyclops](README.md). Guiding principle: **get one model
 - [x] DataLoader sanity check (visualize a batch) — `scripts/check_data.py`; train 36k / test 654, depth ~0–10 m, RGB↔depth aligned
 
 ## Phase 2 — First model end-to-end (Approach 1, baseline)
-- [ ] `models/encoders/base.py` — `Encoder` interface (returns multi-scale feature maps)
-- [ ] `models/encoders/resnet50.py` — torchvision ResNet-50, `out_indices [1,2,3,4]`
-- [ ] `models/decoders/lightweight.py` — feature pyramid → dense depth
-- [ ] `models/build.py` — factory assembling encoder + decoder (+ fusion later) from config
-- [ ] `models/losses.py` — SiLog loss
-- [ ] `engine/trainer.py` — AMP, grad clip, cosine + warmup, `trainable` filter, W&B, best checkpoint
-- [ ] `engine/evaluator.py` — metrics, eval crop (eigen/garg), optional median align
-- [ ] `scripts/train.py`, `scripts/evaluate.py` — thin CLI wrappers
-- [ ] **run `01_resnet50_nyu` to completion — key milestone**
+- [x] `models/encoders/base.py` — `Encoder` interface (returns multi-scale feature maps)
+- [x] `models/encoders/resnet50.py` — torchvision ResNet-50, features at strides 4/8/16/32
+- [x] `models/decoders/lightweight.py` — feature pyramid → dense depth
+- [x] `models/build.py` — factory assembling encoder + decoder (+ fusion later) from config
+- [x] `models/losses.py` — SiLog loss
+- [x] `engine/trainer.py` — AMP, grad clip, cosine + warmup, `trainable` filter, W&B, best checkpoint
+- [x] `engine/evaluator.py` — metrics, eval crop (eigen), optional median align
+- [x] `scripts/train.py`, `scripts/evaluate.py` — thin CLI wrappers
+- [x] **run `01_resnet50_nyu` end-to-end — pipeline works** (1-epoch smoke: loss 6.8→1.2, abs_rel 0.155, delta1 0.773, checkpoint + W&B ok). Rerun full 20 epochs for the reported baseline.
 
 ## Phase 3 — Frozen encoders (Approaches 2 & 3)
 - [ ] `models/encoders/sd_unet.py` — frozen SD-2.1 UNet, single forward at `timestep=1`, tap `feature_blocks` → run `02_sd_unet_nyu`

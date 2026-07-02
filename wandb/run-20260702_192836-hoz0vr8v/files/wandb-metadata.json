@@ -1,0 +1,43 @@
+{
+  "os": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "python": "CPython 3.11.15",
+  "startedAt": "2026-07-02T17:28:36.590535Z",
+  "args": [
+    "--config",
+    "configs/experiments/01_resnet50_nyu.yaml"
+  ],
+  "program": "/mnt/c/Users/jovan/OneDrive/Desktop/RI/cyclops/scripts/train.py",
+  "codePath": "scripts/train.py",
+  "codePathLocal": "scripts/train.py",
+  "git": {
+    "remote": "https://github.com/AStroCvijo/cyclops.git",
+    "commit": "46e0a6e8b80ea35308ab82dd966854d696d7d24e"
+  },
+  "email": "jovan.cvijanovic2@gmail.com",
+  "root": "/mnt/c/Users/jovan/OneDrive/Desktop/RI/cyclops",
+  "host": "CVIJOPC",
+  "executable": "/home/jovan/miniconda3/envs/cyclops/bin/python",
+  "cpu_count": 8,
+  "cpu_count_logical": 16,
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "1081101176832",
+      "used": "57380089856"
+    }
+  },
+  "memory": {
+    "total": "8139235328"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "memoryTotal": "8585740288",
+      "architecture": "Ada",
+      "uuid": "GPU-0f68743f-9209-c575-89d3-6d9fc8d856b7"
+    }
+  ],
+  "cudaVersion": "13.2",
+  "writerId": "wcgzgeh6vxv2vgm2ci76szdseew0dg8t"
+}
