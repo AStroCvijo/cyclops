@@ -25,16 +25,43 @@ cd "$DATA_DIR"
 
 BTS_RAW="https://raw.githubusercontent.com/cleinc/bts/master/utils"
 SYNC_GDRIVE_ID="1AysroWpfISmm-yRFGBgFTrLy6FjQwvwP"
+# Public mirror used by NeWCRFs when the BTS Google Drive link hits quota limits.
+SYNC_MIRROR_URL="https://virutalbuy-public.oss-cn-hangzhou.aliyuncs.com/share/newcrfs/datasets/nyu/sync.zip"
 LABELED_MAT_URL="http://horatio.cs.nyu.edu/mit/silberman/nyu_depth_v2/nyu_depth_v2_labeled.mat"
+
+download_file() {
+    local url="$1"
+    local out="$2"
+    if command -v wget >/dev/null 2>&1; then
+        wget -c "$url" -O "$out"
+    elif command -v curl >/dev/null 2>&1; then
+        curl -fL -C - "$url" -o "$out"
+    else
+        echo ">> Need wget or curl to download $url" >&2
+        exit 1
+    fi
+}
+
+download_sync_zip() {
+    rm -f sync.zip
+    echo ">> Trying Google Drive (BTS sync.zip)..."
+    if gdown "$SYNC_GDRIVE_ID" -O sync.zip; then
+        return 0
+    fi
+
+    rm -f sync.zip
+    echo ">> Google Drive failed (often a quota limit). Trying public mirror..."
+    download_file "$SYNC_MIRROR_URL" sync.zip
+}
 
 echo ">> Target directory: $(pwd)"
 
-# 1. Training set: sync.zip (~4 GB) -> sync/
+# 1. Training set: sync.zip (~4–14 GB depending on source) -> sync/
 if [ -d "sync" ]; then
     echo ">> [1/3] sync/ already exists, skipping training download."
 else
-    echo ">> [1/3] Downloading training set (sync.zip, ~4 GB)..."
-    gdown "$SYNC_GDRIVE_ID" -O sync.zip
+    echo ">> [1/3] Downloading training set (sync.zip)..."
+    download_sync_zip
     echo ">> Unzipping sync.zip..."
     unzip -q sync.zip
     rm -f sync.zip
@@ -45,7 +72,7 @@ if [ -f "nyu_depth_v2_labeled.mat" ] || [ -d "official_splits/test" ]; then
     echo ">> [2/3] labeled .mat already present (or test already extracted), skipping."
 else
     echo ">> [2/3] Downloading labeled .mat (~2.8 GB)..."
-    wget -c "$LABELED_MAT_URL" -O nyu_depth_v2_labeled.mat
+    download_file "$LABELED_MAT_URL" nyu_depth_v2_labeled.mat
 fi
 
 # 3. Extract official_splits/test/ (654 images) from the .mat using the BTS helper.
@@ -53,7 +80,7 @@ if [ -d "official_splits/test" ]; then
     echo ">> [3/3] official_splits/test/ already exists, skipping extraction."
 else
     echo ">> [3/3] Fetching the split-index file (the buggy BTS extractor is replaced by ours)..."
-    wget -c "$BTS_RAW/splits.mat" -O splits.mat
+    download_file "$BTS_RAW/splits.mat" splits.mat
 
     echo ">> Extracting test set from the .mat..."
     # Our scripts/extract_nyu_test.py fixes BTS's numpy-2.x crash and writes test only.
