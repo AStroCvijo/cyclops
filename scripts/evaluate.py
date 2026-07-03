@@ -14,6 +14,7 @@ from cyclops.engine.evaluator import evaluate
 from cyclops.models.build import build_model
 from cyclops.utils.checkpoint import load_checkpoint
 from cyclops.utils.config import load_config
+from cyclops.utils.device import dataloader_workers, resolve_device
 
 
 def main():
@@ -23,7 +24,7 @@ def main():
     args = ap.parse_args()
 
     cfg = load_config(args.config)
-    device = cfg["device"] if torch.cuda.is_available() else "cpu"
+    device = resolve_device(cfg.get("device", "auto"))
 
     model = build_model(cfg).to(device)
     ckpt = args.checkpoint or (
@@ -34,7 +35,7 @@ def main():
     test_set = build_dataset(cfg, "test")
     loader = DataLoader(
         test_set, batch_size=cfg["eval"]["batch_size"], shuffle=False,
-        num_workers=cfg["training"]["num_workers"],
+        num_workers=dataloader_workers(cfg["training"]["num_workers"]),
     )
     metrics = evaluate(model, loader, device, cfg)
     print(metrics)
