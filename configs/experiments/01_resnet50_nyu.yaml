@@ -19,4 +19,5 @@ model:
     out_channels: [256, 128, 64, 32]
 
 training:
+  epochs: 20
   trainable: null                  # full model trains

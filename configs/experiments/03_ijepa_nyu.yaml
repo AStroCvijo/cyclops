@@ -5,20 +5,22 @@ _base_:
 experiment:
   name: 03_ijepa_nyu
   approach: 3
-  description: Frozen I-JEPA ViT encoder + trained decoder (semantic patch features).
+  description: Frozen I-JEPA ViT encoder + trainable DPT decoder (semantic patch features).
 
 model:
   encoder:
     name: ijepa
-    model_id: facebook/ijepa_vith14_1k
-    frozen: true
-    feature_layers: [5, 11, 17, 23]   # ViT blocks reassembled into a feature pyramid
+    model_name: facebook/ijepa_vith14_1k
+    tap_layers: [8, 16, 24, 32]      # transformer layers reassembled into the pyramid
+    image_size: [420, 560]           # ViT input: divisible by patch 14, keeps NYU 4:3 aspect
   fusion: null
   decoder:
     name: dpt                          # DPT-style reassembly suits ViT tokens
-    out_channels: [256, 128, 64, 32]
+    reassemble_channels: [256, 512, 1024, 1024]   # fine -> coarse
+    out_channels: [256, 128, 64, 32]              # top-down fusion widths
 
 training:
-  trainable: [decoder]
+  batch_size: 4                      # ViT-H forward is heavy; smaller batch fits memory
+  trainable: [decoder]               # encoder stays frozen
   optimizer:
-    lr: 2.0e-4
+    lr: 2.0e-4                        # decoder-only trains fine at a higher LR

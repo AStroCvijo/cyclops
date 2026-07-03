@@ -27,8 +27,8 @@ Implementation plan for [cyclops](README.md). Guiding principle: **get one model
 
 ## Phase 3 — Frozen encoders (Approaches 2 & 3)
 - [ ] `models/encoders/sd_unet.py` — frozen SD-2.1 UNet, single forward at `timestep=1`, tap `feature_blocks` → run `02_sd_unet_nyu`
-- [ ] `models/encoders/ijepa.py` — frozen I-JEPA ViT, layers `[5,11,17,23]`
-- [ ] `models/decoders/dpt.py` — DPT-style reassembly of ViT tokens → run `03_ijepa_nyu`
+- [x] `models/encoders/ijepa.py` — frozen I-JEPA ViT-H/14, taps layers `[8,16,24,32]`, tokens → grids
+- [x] `models/decoders/dpt.py` — DPT-style reassembly of ViT tokens → pyramid → top-down fusion. Wired in `build.py`, config `03_ijepa_nyu`. **Trainable = decoder only.** Not yet trained.
 
 ## Phase 4 — Fusion (Approach 4)
 - [ ] `models/fusion.py` — `concat` (first) and `cross_attention`; `build.py` supports an `encoders` list → run `04_fusion_nyu`
