@@ -16,6 +16,7 @@ from cyclops.engine.evaluator import evaluate
 from cyclops.models.build import build_model
 from cyclops.models.losses import SiLogLoss
 from cyclops.utils.checkpoint import save_checkpoint
+from cyclops.utils.device import dataloader_workers, pin_memory_for, resolve_device
 from cyclops.utils.logging import get_logger, init_wandb
 
 log = get_logger()
@@ -48,19 +49,22 @@ def make_scheduler(optimizer, epochs, warmup_epochs):
 
 # Function for training one experiment end-to-end from its config
 def train(cfg):
-    device = cfg["device"] if torch.cuda.is_available() else "cpu"
+    device = resolve_device(cfg.get("device", "auto"))
     torch.manual_seed(cfg["seed"])
     tr = cfg["training"]
+    workers = dataloader_workers(tr["num_workers"])
+    pin_memory = pin_memory_for(device)
+    log.info(f"device: {device}")
 
     train_set = build_dataset(cfg, "train")
     test_set = build_dataset(cfg, "test")
     train_loader = DataLoader(
         train_set, batch_size=tr["batch_size"], shuffle=True,
-        num_workers=tr["num_workers"], pin_memory=True, drop_last=True,
+        num_workers=workers, pin_memory=pin_memory, drop_last=True,
     )
     test_loader = DataLoader(
         test_set, batch_size=cfg["eval"]["batch_size"], shuffle=False,
-        num_workers=tr["num_workers"], pin_memory=True,
+        num_workers=workers, pin_memory=pin_memory,
     )
 
     model = build_model(cfg).to(device)
@@ -72,8 +76,8 @@ def train(cfg):
     scheduler = make_scheduler(optimizer, tr["epochs"], tr["scheduler"]["warmup_epochs"])
     loss_fn = SiLogLoss(lam=tr["loss"]["lambda"])
 
-    use_amp = tr["amp"] and device == "cuda"
-    scaler = torch.amp.GradScaler(device, enabled=use_amp)
+    use_amp = tr["amp"] and device.type == "cuda"
+    scaler = torch.amp.GradScaler(device.type, enabled=use_amp)
 
     run = init_wandb(cfg)
     ckpt_dir = Path(cfg["checkpoint"]["dir"]) / cfg["experiment"]["name"] / "checkpoints"
@@ -88,7 +92,7 @@ def train(cfg):
             mask = batch["mask"].to(device)
 
             optimizer.zero_grad()
-            with torch.amp.autocast(device, enabled=use_amp):
+            with torch.amp.autocast(device.type, enabled=use_amp):
                 pred = model(image)
                 loss = loss_fn(pred, depth, mask)
             scaler.scale(loss).backward()
