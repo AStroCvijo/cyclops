@@ -1,13 +1,16 @@
 """Assemble the depth model (encoder + decoder) from an experiment config.
 
-This is the one place approaches branch: the ResNet-50 baseline (approach 1) and
-the frozen Stable Diffusion UNet encoder (approach 2) are wired up here; the other
-frozen-encoder approaches plug in the same way.
+This is the one place approaches branch: the ResNet-50 baseline (approach 1), the
+frozen Stable Diffusion UNet encoder (approach 2), and the frozen I-JEPA encoder +
+DPT decoder (approach 3) are wired up here; the remaining approaches plug in the
+same way.
 """
 
 import torch.nn as nn
 
+from cyclops.models.decoders.dpt import DPTDecoder
 from cyclops.models.decoders.lightweight import LightweightDecoder
+from cyclops.models.encoders.ijepa import IjepaEncoder
 from cyclops.models.encoders.resnet50 import ResNet50Encoder
 from cyclops.models.encoders.sd_unet import SDUNetEncoder
 
@@ -24,6 +27,12 @@ def build_encoder(enc_cfg):
             feature_blocks=enc_cfg["feature_blocks"],
             prompt=enc_cfg.get("prompt", ""),
         )
+    if name == "ijepa":
+        return IjepaEncoder(
+            model_name=enc_cfg["model_name"],
+            tap_layers=enc_cfg["tap_layers"],
+            image_size=enc_cfg["image_size"],
+        )
     raise ValueError(f"encoder {name!r} is not implemented yet")
 
 
@@ -32,6 +41,10 @@ def build_decoder(dec_cfg, in_channels, max_depth):
     name = dec_cfg["name"]
     if name == "lightweight":
         return LightweightDecoder(in_channels, dec_cfg["out_channels"], max_depth)
+    if name == "dpt":
+        return DPTDecoder(
+            in_channels, dec_cfg["reassemble_channels"], dec_cfg["out_channels"], max_depth
+        )
     raise ValueError(f"decoder {name!r} is not implemented yet")
 
 
