@@ -1,13 +1,15 @@
 """Assemble the depth model (encoder + decoder) from an experiment config.
 
-This is the one place approaches branch. For now only the ResNet-50 baseline
-(approach 1) is wired up; the frozen-encoder approaches plug in here later.
+This is the one place approaches branch: the ResNet-50 baseline (approach 1) and
+the frozen Stable Diffusion UNet encoder (approach 2) are wired up here; the other
+frozen-encoder approaches plug in the same way.
 """
 
 import torch.nn as nn
 
 from cyclops.models.decoders.lightweight import LightweightDecoder
 from cyclops.models.encoders.resnet50 import ResNet50Encoder
+from cyclops.models.encoders.sd_unet import SDUNetEncoder
 
 
 # Function for building an encoder from its config block
@@ -15,6 +17,13 @@ def build_encoder(enc_cfg):
     name = enc_cfg["name"]
     if name == "resnet50":
         return ResNet50Encoder(pretrained=enc_cfg.get("pretrained", True))
+    if name == "sd_unet":
+        return SDUNetEncoder(
+            model_id=enc_cfg["model_id"],
+            timestep=enc_cfg.get("timestep", 1),
+            feature_blocks=enc_cfg["feature_blocks"],
+            prompt=enc_cfg.get("prompt", ""),
+        )
     raise ValueError(f"encoder {name!r} is not implemented yet")
 
 

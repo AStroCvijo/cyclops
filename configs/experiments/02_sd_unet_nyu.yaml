@@ -10,7 +10,9 @@ experiment:
 model:
   encoder:
     name: sd_unet
-    model_id: stabilityai/stable-diffusion-2-1
+    # Faithful SD 2.1 mirror: the canonical stabilityai/stable-diffusion-2-1 repo
+    # was removed from HF. Verified genuine (block_out [320,640,1280,1280], cross_attn 1024).
+    model_id: philschmid/stable-diffusion-2-1
     frozen: true
     timestep: 1                    # single forward pass for feature extraction
     feature_blocks: [up_1, up_2, up_3, mid]   # which UNet blocks to tap
@@ -21,6 +23,8 @@ model:
     out_channels: [256, 128, 64, 32]
 
 training:
+  epochs: 20                       # parity with the ResNet-50 baseline
+  batch_size: 4                    # SD adds a frozen VAE + UNet -> smaller batch fits memory
   trainable: [decoder]             # encoder stays frozen
   optimizer:
     lr: 2.0e-4                     # decoder-only -> can use a slightly higher lr
