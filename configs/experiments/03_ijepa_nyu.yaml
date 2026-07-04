@@ -20,7 +20,7 @@ model:
     out_channels: [256, 128, 64, 32]              # top-down fusion widths
 
 training:
-  batch_size: 4                      # ViT-H forward is heavy; smaller batch fits memory
+  batch_size: 16                     # bigger batch: smoother gradients + stable decoder BatchNorm
   trainable: [decoder]               # encoder stays frozen
   optimizer:
     lr: 2.0e-4                        # decoder-only trains fine at a higher LR
