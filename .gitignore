@@ -222,3 +222,7 @@ __marimo__/
 !/data/.gitkeep
 /outputs/*
 !/outputs/.gitkeep
+
+/tmp/
+/.cursor/
+AGENTS.md
