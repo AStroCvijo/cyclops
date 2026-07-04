@@ -10,9 +10,10 @@ experiment:
 model:
   encoder:
     name: sd_unet
-    # Faithful SD 2.1 mirror: the canonical stabilityai/stable-diffusion-2-1 repo
-    # was removed from HF. Verified genuine (block_out [320,640,1280,1280], cross_attn 1024).
-    model_id: philschmid/stable-diffusion-2-1
+    # SD-1.5 official community re-host: ungated and ships safetensors. The stabilityai
+    # SD-2.1 repos are license-gated, and the philschmid mirror is bin-only (breaks on
+    # torch<2.6). SD-1.5 is what VPD (arxiv 2303.02153) uses for diffusion features.
+    model_id: stable-diffusion-v1-5/stable-diffusion-v1-5
     frozen: true
     timestep: 1                    # single forward pass for feature extraction
     feature_blocks: [up_1, up_2, up_3, mid]   # which UNet blocks to tap

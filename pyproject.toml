@@ -20,7 +20,8 @@ dependencies = [
     "pillow",
     "opencv-python",
     "albumentations",
-    "diffusers",
+    "diffusers==0.31.0",          # newer releases' attention_dispatch breaks on older torch
+    "huggingface_hub>=0.26",      # transformers needs is_offline_mode; older hub lacks it
     "transformers",
     "accelerate",
     "pyyaml",

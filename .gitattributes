@@ -1,0 +1,5 @@
+# Normalize line endings so scripts don't arrive on Linux pods with CRLF
+# (which breaks `bash script.sh` with `$'\r': command not found`).
+* text=auto
+*.sh text eol=lf
+*.py text eol=lf

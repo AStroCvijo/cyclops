@@ -5,29 +5,29 @@ _base_:
 experiment:
   name: 04_fusion_nyu
   approach: 4
-  description: Fusion of frozen SD-UNet + I-JEPA features + trained decoder & fusion module.
+  description: Fusion of frozen SD-UNet + I-JEPA features + trainable decoder (& fusion module).
 
 model:
-  encoders:                          # list -> multiple frozen backbones
+  encoders:                          # list -> two frozen backbones; the first sets level sizes
     - name: sd_unet
-      model_id: stabilityai/stable-diffusion-2-1
-      frozen: true
+      model_id: stable-diffusion-v1-5/stable-diffusion-v1-5   # ungated, ships safetensors
       timestep: 1
       feature_blocks: [up_1, up_2, up_3, mid]
       prompt: ""
     - name: ijepa
-      model_id: facebook/ijepa_vith14_1k
-      frozen: true
-      feature_layers: [5, 11, 17, 23]
+      model_name: facebook/ijepa_vith14_1k
+      tap_layers: [8, 16, 24, 32]
+      image_size: [420, 560]
   fusion:
-    name: cross_attention            # alternatives: concat
-    embed_dim: 256
-    num_heads: 8
+    method: concat                   # concat (parameter-free) | cross_attention
+    dim: 256                         # cross_attention only: common projection dim
+    heads: 8                         # cross_attention only
   decoder:
     name: lightweight
     out_channels: [256, 128, 64, 32]
 
 training:
-  trainable: [fusion, decoder]       # both encoders stay frozen
+  batch_size: 2                      # two heavy frozen encoders (SD + ViT-H) -> small batch
+  trainable: [fusion, decoder]       # encoders frozen; fusion module + decoder train
   optimizer:
     lr: 2.0e-4

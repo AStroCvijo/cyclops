@@ -26,12 +26,12 @@ Implementation plan for [cyclops](README.md). Guiding principle: **get one model
 - [x] **run `01_resnet50_nyu` — baseline trained (RunPod 4090)**. Converged ~epoch 11: **abs_rel 0.138, rmse 0.495, delta1 0.822** (NYU clean test). Plateaued (epochs 11→15 flat).
 
 ## Phase 3 — Frozen encoders (Approaches 2 & 3)
-- [ ] `models/encoders/sd_unet.py` — frozen SD-2.1 UNet, single forward at `timestep=1`, tap `feature_blocks` → run `02_sd_unet_nyu`
+- [x] `models/encoders/sd_unet.py` — frozen SD UNet, single forward at `timestep=1`, hook `feature_blocks`, auto-probe channels. Uses ungated SD-1.5 (`stable-diffusion-v1-5/stable-diffusion-v1-5`; SD-2.1 repos are gated). Running `02_sd_unet_nyu` (RunPod).
 - [x] `models/encoders/ijepa.py` — frozen I-JEPA ViT-H/14, taps layers `[8,16,24,32]`, tokens → grids
-- [x] `models/decoders/dpt.py` — DPT-style reassembly of ViT tokens → pyramid → top-down fusion. Wired in `build.py`, config `03_ijepa_nyu`. **Trainable = decoder only.** Not yet trained.
+- [x] `models/decoders/dpt.py` — DPT-style reassembly of ViT tokens → pyramid → top-down fusion. Wired in `build.py`, config `03_ijepa_nyu`. **Trained: abs_rel 0.131 (ep12), beats baseline.**
 
 ## Phase 4 — Fusion (Approach 4)
-- [ ] `models/fusion.py` — `concat` (first) and `cross_attention`; `build.py` supports an `encoders` list → run `04_fusion_nyu`
+- [x] `models/fusion.py` — `ConcatFusion` (parameter-free, default) and `CrossAttentionFusion` (SD queries attend to I-JEPA). `build.py` handles a `model.encoders` list → `FusionModel` with trainable `fusion` + `decoder`. Config `04_fusion_nyu`. **Not yet trained.**
 
 ## Phase 5 — SOTA reference (Approach 5, eval-only)
 - [ ] `models/encoders/depth_anything.py` — DepthAnything V2 then V3 zero-shot, `align: median`, eval-only
