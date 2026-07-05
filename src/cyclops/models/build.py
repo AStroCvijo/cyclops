@@ -10,6 +10,7 @@ import torch.nn as nn
 
 from cyclops.models.decoders.dpt import DPTDecoder
 from cyclops.models.decoders.lightweight import LightweightDecoder
+from cyclops.models.depth_anything import DepthAnythingModel
 from cyclops.models.encoders.ijepa import IjepaEncoder
 from cyclops.models.encoders.resnet50 import ResNet50Encoder
 from cyclops.models.encoders.sd_unet import SDUNetEncoder
@@ -100,6 +101,9 @@ def build_model(cfg):
         fusion = build_fusion(m["fusion"], encoders[0].out_channels, encoders[1].out_channels)
         decoder = build_decoder(m["decoder"], in_channels=fusion.out_channels, max_depth=max_depth)
         return FusionModel(encoders, fusion, decoder)
+
+    if m["encoder"]["name"] == "depth_anything":   # approach 5: zero-shot, no decoder
+        return DepthAnythingModel(m["encoder"]["model_id"])
 
     encoder = build_encoder(m["encoder"])
     decoder = build_decoder(m["decoder"], in_channels=encoder.out_channels, max_depth=max_depth)

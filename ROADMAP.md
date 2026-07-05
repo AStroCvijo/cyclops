@@ -10,7 +10,7 @@ Implementation plan for [cyclops](README.md). Guiding principle: **get one model
 - [x] smoke-test the config loader against an experiment file (`tests/test_config.py`, 11 passing)
 
 ## Phase 1 — Data (NYU first)
-- [x] `data/datasets.py` — NYU dataset: RGB+depth, resize, clamp, `valid_mask`. **KITTI deferred.**
+- [x] `data/datasets.py` — NYU dataset: RGB+depth, resize, clamp, `valid_mask`. **KITTI dropped (out of scope — time).**
 - [x] `data/transforms.py` — normalization + train-only augmentation (kept separate from degradations)
 - [x] DataLoader sanity check (visualize a batch) — `scripts/check_data.py`; train 36k / test 654, depth ~0–10 m, RGB↔depth aligned
 
@@ -34,22 +34,19 @@ Implementation plan for [cyclops](README.md). Guiding principle: **get one model
 - [x] `models/fusion.py` — `ConcatFusion` (parameter-free, default) and `CrossAttentionFusion` (SD queries attend to I-JEPA). `build.py` handles a `model.encoders` list → `FusionModel` with trainable `fusion` + `decoder`. Config `04_fusion_nyu`. **Not yet trained.**
 
 ## Phase 5 — SOTA reference (Approach 5, eval-only)
-- [ ] `models/encoders/depth_anything.py` — DepthAnything V2 then V3 zero-shot, `align: median`, eval-only
+- [x] `models/depth_anything.py` — DepthAnything V2 zero-shot (`DepthAnythingModel`, HF `AutoModelForDepthEstimation`), inverts disparity → depth, `align: median`, no checkpoint. Config `05_depth_anything_nyu`. V3: swap `model_id` once its HF checkpoint is up.
 
 ## Phase 6 — Robustness
-- [ ] `scripts/generate_degraded.py` — write degraded test sets to disk once (deterministic)
-- [ ] evaluate all 5 models on original + 3 degradations × 3 severities, no retraining
+- [x] `scripts/generate_degraded.py` — writes fog/blur/exposure × light/moderate/severe test sets to disk (deterministic, CPU-only), depth copied unchanged
+- [x] `scripts/evaluate_robustness.py` — evaluates any/all models on clean + 9 degraded sets, no retraining; `evaluate.py --degradation/--severity` for a single condition. Writes `outputs/robustness.json`.
 
-## Phase 7 — KITTI replication
-- [ ] add KITTI to the dataset (sparse mask, Garg crop, 0–80 m), then re-run Phases 2–6 with `*_kitti` configs
-
-## Phase 8 — Analysis & write-up
+## Phase 7 — Analysis & write-up
 - [ ] `scripts/aggregate_results.py` — collect metrics, trainable params, train time, inference time per image
 - [ ] qualitative depth-map visualizations (esp. degraded before/after)
 - [ ] *(optional)* fine-tune selected models on a mix of original + degraded data
 - [ ] report
 
 ## Critical notes
-- **Masks are mandatory everywhere.** KITTI gt is sparse, and NYU also has invalid pixels (depth = 0). Compute every metric and the loss only over `valid_mask`.
-- **Don't touch KITTI until the full NYU pipeline runs** — mixing 0–10 m and 0–80 m ranges is the most common source of silent bugs.
+- **Scope: NYU Depth V2 only.** KITTI is dropped — time-bound, no budget to retrain every model on a second 0–80 m dataset. All five approaches are compared on NYU.
+- **Masks are mandatory.** NYU has invalid pixels (depth = 0). Compute every metric and the loss only over `valid_mask`.
 - The milestone is finishing the baseline's full cycle on NYU; everything after is adding encoders, not new infrastructure.

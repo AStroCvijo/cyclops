@@ -1,0 +1,20 @@
+_base_:
+  - ../_base/default.yaml
+  - ../_base/nyu.yaml
+
+experiment:
+  name: 05_depth_anything_nyu
+  approach: 5
+  description: DepthAnything V2 zero-shot (eval-only, median-aligned) — SOTA upper bound.
+
+model:
+  encoder:
+    name: depth_anything
+    # Relative-depth V2 checkpoint (HF). Swap for a larger backbone (…-Large-hf) for a
+    # stronger reference, or a V3 checkpoint id once it is on the Hub. Depth is
+    # affine-invariant, so eval uses median alignment (below).
+    model_id: depth-anything/Depth-Anything-V2-Base-hf
+  decoder: null                    # eval-only: no decoder is trained
+
+eval:
+  align: median                    # rescale each prediction to the gt median (scale-invariant SOTA)
