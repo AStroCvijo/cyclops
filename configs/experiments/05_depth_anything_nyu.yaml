@@ -17,4 +17,9 @@ model:
     model_id: depth-anything/Depth-Anything-V2-Metric-Indoor-Base-hf
   decoder: null                    # eval-only: no decoder is trained
 
-# no eval.align: the metric model already predicts meters (raw upper-bound performance)
+eval:
+  # The metric-indoor checkpoint was fine-tuned on Hypersim (synthetic), so its
+  # absolute scale is offset on NYU (real Kinect). Median-align each prediction to
+  # the gt median — the standard zero-shot protocol — to score its structure as the
+  # SOTA upper bound rather than the cross-domain scale gap.
+  align: median
