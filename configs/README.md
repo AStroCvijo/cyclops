@@ -3,7 +3,7 @@
 One file in `experiments/` is one experiment (one row in the results table).
 
 ## Layout
-- `_base/`: shared defaults. `default.yaml` for training/eval/logging, plus one dataset file per benchmark (`nyu.yaml`, `kitti.yaml`).
+- `_base/`: shared defaults. `default.yaml` for training/eval/logging, plus the dataset file (`nyu.yaml`).
 - `degradations/`: fog, blur, and exposure definitions, each with `light`, `moderate`, and `severe` levels.
 - `experiments/`: the 5 approaches. Each includes `_base` files via `_base_` and sets only what differs (mostly the `model` block).
 

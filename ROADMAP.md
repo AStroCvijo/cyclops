@@ -10,7 +10,7 @@ Implementation plan for [cyclops](README.md). Guiding principle: **get one model
 - [x] smoke-test the config loader against an experiment file (`tests/test_config.py`, 11 passing)
 
 ## Phase 1 — Data (NYU first)
-- [x] `data/datasets.py` — NYU dataset: RGB+depth, resize, clamp, `valid_mask`. **KITTI dropped (out of scope — time).**
+- [x] `data/datasets.py` — NYU dataset: RGB+depth, resize, clamp, `valid_mask`.
 - [x] `data/transforms.py` — normalization + train-only augmentation (kept separate from degradations)
 - [x] DataLoader sanity check (visualize a batch) — `scripts/check_data.py`; train 36k / test 654, depth ~0–10 m, RGB↔depth aligned
 
@@ -47,6 +47,6 @@ Implementation plan for [cyclops](README.md). Guiding principle: **get one model
 - [ ] report
 
 ## Critical notes
-- **Scope: NYU Depth V2 only.** KITTI is dropped — time-bound, no budget to retrain every model on a second 0–80 m dataset. All five approaches are compared on NYU.
+- **Scope: NYU Depth V2 only.** All five approaches are compared on NYU.
 - **Masks are mandatory.** NYU has invalid pixels (depth = 0). Compute every metric and the loss only over `valid_mask`.
 - The milestone is finishing the baseline's full cycle on NYU; everything after is adding encoders, not new infrastructure.

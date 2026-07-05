@@ -3,7 +3,7 @@
 NYU Depth V2, 654-image Eigen test split. AbsRel ↓, RMSE ↓ (meters), δ1 ↑.
 Each trained row is `best.pt` (best-AbsRel epoch) for that experiment; approaches 1–4
 train only the decoder (+ fusion module for 4) on top of frozen encoders, except the
-ResNet-50 baseline which trains end-to-end. Scope is NYU only (KITTI dropped — time).
+ResNet-50 baseline which trains end-to-end. Scope is NYU only.
 
 ## Clean test set
 
