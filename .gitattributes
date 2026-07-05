@@ -1,5 +1,22 @@
-# Normalize line endings so scripts don't arrive on Linux pods with CRLF
-# (which breaks `bash script.sh` with `$'\r': command not found`).
+# Let Git normalize line endings: LF in the repo, native on checkout.
+# This keeps CRLF-vs-LF differences out of diffs across macOS/Windows/Linux.
 * text=auto
+
+# Force LF for files executed on Linux (CRLF breaks `bash script.sh`).
 *.sh text eol=lf
 *.py text eol=lf
+
+# Binary files: never normalize or diff.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.pdf  binary
+*.pt   binary
+*.pth  binary
+*.ckpt binary
+*.npy  binary
+*.npz  binary
+*.zip  binary
+*.gz   binary
+*.tar  binary
