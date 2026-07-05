@@ -1,10 +1,11 @@
 """DepthAnything V2 zero-shot depth (approach 5, eval-only — the SOTA upper bound).
 
-Not part of the encoder/decoder pipeline: this is a full pretrained model that
-predicts depth directly, used without any training. DepthAnything outputs
-affine-invariant *inverse* depth (disparity, larger = closer), so we invert it to
-a depth map and let the evaluator's `align="median"` fix the global scale before
-scoring against metric ground truth.
+Not part of the encoder/decoder pipeline: a full pretrained model that predicts
+depth directly, used without any training. We use the *metric-indoor* checkpoint,
+which regresses depth in meters (trained on Hypersim), so its output is directly
+comparable to NYU ground truth — no scale/shift alignment needed. (The relative
+checkpoints output affine-invariant inverse depth, which median scaling can't fully
+correct, so they score far worse than they should on a metric benchmark.)
 
 The DINOv2 backbone uses ImageNet normalization, the same as `data/transforms.py`,
 so the already-normalized batch is fed straight in — only the spatial size is
@@ -32,7 +33,7 @@ class DepthAnythingModel(nn.Module):
         self.model.eval()
         return self
 
-    # Function for predicting a metric-comparable depth map (up to a global scale)
+    # Function for predicting a metric depth map (meters)
     @torch.no_grad()
     def forward(self, image):
         H, W = image.shape[-2:]
@@ -40,8 +41,5 @@ class DepthAnythingModel(nn.Module):
         w = max(14, round(W / 14) * 14)
         x = F.interpolate(image, size=(h, w), mode="bilinear", align_corners=False)
 
-        disparity = self.model(pixel_values=x).predicted_depth   # (B, h, w), inverse depth
-        disparity = F.interpolate(
-            disparity[:, None], size=(H, W), mode="bilinear", align_corners=False
-        )
-        return 1.0 / disparity.clamp(min=1e-6)                    # -> depth, scale fixed by median align
+        depth = self.model(pixel_values=x).predicted_depth   # (B, h, w), meters
+        return F.interpolate(depth[:, None], size=(H, W), mode="bilinear", align_corners=False)

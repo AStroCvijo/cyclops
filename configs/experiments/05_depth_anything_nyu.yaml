@@ -5,16 +5,16 @@ _base_:
 experiment:
   name: 05_depth_anything_nyu
   approach: 5
-  description: DepthAnything V2 zero-shot (eval-only, median-aligned) — SOTA upper bound.
+  description: DepthAnything V2 metric-indoor zero-shot (eval-only) — SOTA upper bound.
 
 model:
   encoder:
     name: depth_anything
-    # Relative-depth V2 checkpoint (HF). Swap for a larger backbone (…-Large-hf) for a
-    # stronger reference, or a V3 checkpoint id once it is on the Hub. Depth is
-    # affine-invariant, so eval uses median alignment (below).
-    model_id: depth-anything/Depth-Anything-V2-Base-hf
+    # Metric-indoor V2 checkpoint (HF): outputs depth in meters, so no alignment is
+    # needed on NYU. Use …-Large-hf for a stronger reference, or a V3 metric id once
+    # it is on the Hub. (The relative …-Base-hf checkpoints need scale+shift alignment
+    # and score much worse with median-only scaling.)
+    model_id: depth-anything/Depth-Anything-V2-Metric-Indoor-Base-hf
   decoder: null                    # eval-only: no decoder is trained
 
-eval:
-  align: median                    # rescale each prediction to the gt median (scale-invariant SOTA)
+# no eval.align: the metric model already predicts meters (raw upper-bound performance)
