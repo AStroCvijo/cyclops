@@ -1,6 +1,0 @@
-# Commits listed here are skipped by `git blame` (and GitHub's blame view).
-# Enable locally once with:
-#   git config blame.ignoreRevsFile .git-blame-ignore-revs
-
-# chore: normalize line endings to LF via .gitattributes
-8249d3e83c43682bf6a9aea434916f64b49d3b6c
