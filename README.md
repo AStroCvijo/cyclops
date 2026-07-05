@@ -2,7 +2,7 @@
 
 **Comparative analysis of monocular depth estimation methods, with robustness evaluation under degraded visual conditions.**
 
-Monocular depth estimation predicts a per-pixel distance map from a single RGB image — no lidar, no stereo. This project compares five approaches (a supervised ResNet-50 baseline, frozen Stable Diffusion / I-JEPA features, their fusion, and DepthAnything as a SOTA reference) on NYU Depth V2 and KITTI, and measures how each holds up under synthetically degraded inputs (fog, blur, under-exposure).
+Monocular depth estimation predicts a per-pixel distance map from a single RGB image — no lidar, no stereo. This project compares five approaches (a supervised ResNet-50 baseline, frozen Stable Diffusion / I-JEPA features, their fusion, and DepthAnything as a SOTA reference) on NYU Depth V2, and measures how each holds up under synthetically degraded inputs (fog, blur, under-exposure).
 
 Authors: Jovan Cvijanović (SV83/2024), Vukan Radojević (SV67/2023)
 
