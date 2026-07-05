@@ -63,6 +63,24 @@ Takeaways:
   every corruption — robustness here comes from the frozen foundation-model features, not
   from the (larger) trained parameter count.
 
+## Efficiency (trainable params / inference time)
+
+Trainable = parameters that receive gradients; total = full model incl. frozen encoders.
+Inference measured on the eval GPU (A100), mean ms per 480×640 image.
+
+| # | Model | Trainable ↓ | Total | Inference ms/img ↓ |
+|---|-------|-------------|-------|--------------------|
+| 1 | ResNet-50 | 30.2 M | 30.2 M | **6.5** |
+| 2 | SD-UNet | **5.7 M** | 948.9 M | 98.6 |
+| 3 | I-JEPA | 7.9 M | 638.7 M | 142.5 |
+| 4 | Fusion | 11.3 M | 1585.2 M | 239.7 |
+| 5 | DepthAnything | **0** (zero-shot) | 97.5 M | 60.5 |
+
+The frozen approaches train only **6–11 M** parameters — a fraction of the baseline's 30 M —
+despite wrapping 0.6–1.6 B frozen weights, which is exactly the appeal: near-SOTA accuracy for
+a cheaply-trained decoder. The trade-off is inference cost — running the giant frozen encoders
+makes them 15–37× slower than the baseline, and fusion (two encoders) is the slowest.
+
 ## Notes
 
 - **DepthAnything V2** (`Depth-Anything-V2-Metric-Indoor-Base-hf`) is fine-tuned on Hypersim
